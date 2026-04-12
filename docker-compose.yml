@@ -201,7 +201,7 @@ services:
       - bench-network
 
   create-site:
-    <<: *custom_image
+    <<: *custom_imageEnable
     deploy:
       mode: replicated
       replicas: ${CREATE_SITE:-0}
