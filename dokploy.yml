@@ -17,7 +17,7 @@
 version: '3.8'
 
 services:
-  frappe-lms:
+  frontend:
     image: dokploy/dokploy:latest
     deploy:
       labels:
