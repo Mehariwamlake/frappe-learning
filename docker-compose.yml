@@ -162,6 +162,10 @@ services:
       - frappe_network
     volumes:
       - redis-queue-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 5
     command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
 
   redis-cache:
@@ -169,6 +173,10 @@ services:
     restart: always
     networks:
       - frappe_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 5
     command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
   redis-socketio:
     image: redis:6.2-alpine
@@ -176,6 +184,10 @@ services:
     networks:
       - frappe_network
     command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 5
     volumes:
       - redis-socketio-data:/data
 
@@ -202,6 +214,13 @@ services:
     volumes:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
+    depends_on:
+      redis-queue:
+        condition: service_healthy
+      redis-cache:
+        condition: service_started
+      redis-socketio:
+        condition: service_started
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "9000"]
       interval: 10s
