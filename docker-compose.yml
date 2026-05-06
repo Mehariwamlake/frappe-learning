@@ -12,6 +12,10 @@ services:
       DB_PORT: ${DB_PORT}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+  backend-2:
+    image: ghcr.io/mehariwamlake/lms_frappe_apps/custom:1.0.0
+    restart: always
+    command: ["bench", "serve", "--port", "8000"]
 
   configurator:
     image: ghcr.io/mehariwamlake/lms_frappe_apps/custom:1.0.0
@@ -50,11 +54,18 @@ services:
       - --collation-server=utf8mb4_unicode_ci
       - --skip-character-set-client-handshake
       - --skip-innodb-read-only-compressed
-      - --innodb-buffer-pool-size=512M
-      - --innodb-log-file-size=128M
-      - --max-connections=200
+        # 🔥 PERFORMANCE TUNING
+      - --innodb-buffer-pool-size=2G
+      - --innodb-log-file-size=256M
+      - --innodb-flush-log-at-trx-commit=2
+      - --innodb-file-per-table=1
+      - --max-connections=500
       - --query-cache-size=64M
       - --query-cache-type=1
+      - --table-open-cache=400
+
+      - --tmp-table-size=128M
+      - --max-heap-table-size=128M
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
