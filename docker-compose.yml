@@ -83,6 +83,11 @@ services:
       - --collation-server=utf8mb4_unicode_ci
       - --skip-character-set-client-handshake
       - --skip-innodb-read-only-compressed
+      - --innodb-buffer-pool-size=512M
+      - --innodb-log-file-size=128M
+      - --max-connections=200
+      - --query-cache-size=64M
+      - --query-cache-type=1
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
@@ -117,7 +122,7 @@ services:
     restart: always
     networks:
       - frappe_network
-    command: ["bench", "worker", "--queue", "long,default,short"]
+    command: ["bench", "worker", "--queue", "long,default,short", "--concurrency", "2"]
     volumes:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
@@ -130,7 +135,7 @@ services:
     restart: always
     networks:
       - frappe_network
-    command: ["bench", "worker", "--queue", "short,default"]
+    command: ["bench", "worker", "--queue", "short,default", "--concurrency", "4"]
     volumes:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
@@ -174,7 +179,10 @@ services:
     volumes:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
-
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000"]
+      interval: 10s
+      retries: 5
 volumes:
   db-data:
   redis-queue-data:
