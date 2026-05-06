@@ -15,6 +15,14 @@ services:
   backend-2:
     image: ghcr.io/mehariwamlake/lms_frappe_apps/custom:1.0.0
     restart: always
+    networks:
+      - frappe_network
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
     command: ["bench", "serve", "--port", "8000"]
 
   configurator:
@@ -199,6 +207,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    ports:
+    - "9000:9000"
   node-exporter:
     image: prom/node-exporter:latest
     restart: always
