@@ -154,12 +154,22 @@ services:
       - frappe_network
     volumes:
       - redis-queue-data:/data
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
 
   redis-cache:
     image: redis:6.2-alpine
     restart: always
     networks:
       - frappe_network
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+  redis-socketio:
+    image: redis:6.2-alpine
+    restart: always
+    networks:
+      - frappe_network
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-socketio-data:/data
 
   scheduler:
     image: ghcr.io/mehariwamlake/lms_frappe_apps/custom:1.0.0
@@ -180,6 +190,7 @@ services:
     environment:
         REDIS_CACHE: ${REDIS_CACHE}
         REDIS_QUEUE: ${REDIS_QUEUE}
+        REDIS_SOCKETIO: ${REDIS_SOCKETIO}
     volumes:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
@@ -197,6 +208,7 @@ services:
 volumes:
   db-data:
   redis-queue-data:
+  redis-socketio-data:
   sites:
   logs:
 
