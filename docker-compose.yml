@@ -117,31 +117,57 @@ services:
     ports:
       - "8080:8080"
 
+  queue-short-1:
+    image: ghcr.io/mehariwamlake/lms_frappe_apps/custom:1.0.0
+    restart: always
+    networks:
+      - frappe_network
+    command: ["bench", "worker", "--queue", "short,default"]
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
+    environment:
+      REDIS_CACHE: ${REDIS_CACHE}
+      REDIS_QUEUE: ${REDIS_QUEUE}
+
+  queue-short-2:
+    image: ghcr.io/mehariwamlake/lms_frappe_apps/custom:1.0.0
+    restart: always
+    networks:
+      - frappe_network
+    command: ["bench", "worker", "--queue", "short,default"]
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
+    environment:
+      REDIS_CACHE: ${REDIS_CACHE}
+      REDIS_QUEUE: ${REDIS_QUEUE}
+
+  queue-default:
+    image: ghcr.io/mehariwamlake/lms_frappe_apps/custom:1.0.0
+    restart: always
+    networks:
+      - frappe_network
+    command: ["bench", "worker", "--queue", "default"]
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
+    environment:
+      REDIS_CACHE: ${REDIS_CACHE}
+      REDIS_QUEUE: ${REDIS_QUEUE}
+
   queue-long:
     image: ghcr.io/mehariwamlake/lms_frappe_apps/custom:1.0.0
     restart: always
     networks:
       - frappe_network
-    command: ["bench", "worker", "--queue", "long,default,short", "--concurrency", "2"]
+    command: ["bench", "worker", "--queue", "long"]
     volumes:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
     environment:
-      FRAPPE_REDIS_CACHE: redis://${REDIS_CACHE}
-      FRAPPE_REDIS_QUEUE: redis://${REDIS_QUEUE}
-
-  queue-short:
-    image: ghcr.io/mehariwamlake/lms_frappe_apps/custom:1.0.0
-    restart: always
-    networks:
-      - frappe_network
-    command: ["bench", "worker", "--queue", "short,default", "--concurrency", "4"]
-    volumes:
-      - sites:/home/frappe/frappe-bench/sites
-      - logs:/home/frappe/frappe-bench/logs
-    environment:
-      FRAPPE_REDIS_CACHE: redis://${REDIS_CACHE}
-      FRAPPE_REDIS_QUEUE: redis://${REDIS_QUEUE}
+      REDIS_CACHE: ${REDIS_CACHE}
+      REDIS_QUEUE: ${REDIS_QUEUE}
 
   redis-queue:
     image: redis:6.2-alpine
