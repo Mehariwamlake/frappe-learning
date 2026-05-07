@@ -175,7 +175,7 @@ services:
     volumes:
       - redis-socketio-data:/data
     networks:
-      - bench-network
+      - frappe_network
     healthcheck:
       test:
         - CMD
