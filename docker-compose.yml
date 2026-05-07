@@ -168,17 +168,22 @@ services:
       retries: 5
     command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
   redis-socketio:
+    deploy:
+      restart_policy:
+        condition: always
     image: redis:6.2-alpine
-    restart: always
-    networks:
-      - frappe_network
-    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      retries: 5
     volumes:
       - redis-socketio-data:/data
+    networks:
+      - bench-network
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      interval: 5s
+      timeout: 5s
+      retries: 3
 
   scheduler:
     image: ghcr.io/mehariwamlake/lms_frappe_apps/custom:1.0.0
