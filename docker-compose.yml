@@ -211,10 +211,13 @@ services:
       redis-socketio:
         condition: service_started
     healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "9000"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test:
+        - CMD
+        - wait-for-it
+        - '0.0.0.0:9000'
+      interval: 2s
+      timeout: 10s
+      retries: 30
     ports:
     - "9000:9000"
   node-exporter:
