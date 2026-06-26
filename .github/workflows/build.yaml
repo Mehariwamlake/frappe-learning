@@ -97,7 +97,7 @@ jobs:
       ### Using docker build
       - uses: actions/checkout@v5
         with:
-          repository: Mehariwamlake/techvision-erp
+          repository: Mehariwamlake/frappe-learning
           path: builds
       - name: Normalize owner to lowercase
         run: echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
