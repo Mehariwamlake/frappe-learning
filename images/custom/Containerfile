@@ -170,3 +170,32 @@ CMD [ \
   "--preload", \
   "frappe.app:application" \
 ]
+
+
+# =========================
+# FRONTEND (NGINX ONLY)
+# =========================
+FROM base AS frontend
+
+USER frappe
+
+COPY --from=builder --chown=frappe:frappe \
+    /home/frappe/frappe-bench/sites \
+    /home/frappe/frappe-bench/sites
+
+COPY --from=builder --chown=frappe:frappe \
+    /home/frappe/frappe-bench/sites/assets \
+    /home/frappe/frappe-bench/sites/assets
+
+WORKDIR /home/frappe/frappe-bench
+
+EXPOSE 8080
+
+CMD ["nginx-entrypoint.sh"]
+
+# =========================
+# WEBSOCKET
+# =========================
+FROM backend AS websocket
+
+CMD ["node", "apps/frappe/socketio.js"]
