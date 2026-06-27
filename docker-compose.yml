@@ -1,6 +1,6 @@
 services:
   backend:
-    image: ghcr.io/mehariwamlake/frappe-learning:latest
+    image: ghcr.io/mehariwamlake/frappe-learning-backend:latest
     restart: always
     networks:
       - frappe_network
@@ -15,7 +15,7 @@ services:
 
 
   configurator:
-    image: ghcr.io/mehariwamlake/frappe-learning:latest
+    image: ghcr.io/mehariwamlake/frappe-learning-backend:latest
     restart: "no"
     networks:
       - frappe_network
@@ -70,7 +70,7 @@ services:
       - db-data:/var/lib/mysql
 
   frontend:
-    image: ghcr.io/mehariwamlake/frappe-learning:latest
+    image: ghcr.io/mehariwamlake/frappe-learning-frontend:latest
     restart: always
     depends_on:
       - websocket
@@ -93,7 +93,7 @@ services:
       - "8080:8080"
 
   queue-short-1:
-    image: ghcr.io/mehariwamlake/frappe-learning:latest
+    image: ghcr.io/mehariwamlake/frappe-learning-backend:latest
     restart: always
     networks:
       - frappe_network
@@ -106,7 +106,7 @@ services:
       REDIS_QUEUE: ${REDIS_QUEUE}
 
   queue-short-2:
-    image: ghcr.io/mehariwamlake/frappe-learning:latest
+    image: ghcr.io/mehariwamlake/frappe-learning-backend:latest
     restart: always
     networks:
       - frappe_network
@@ -119,7 +119,7 @@ services:
       REDIS_QUEUE: ${REDIS_QUEUE}
 
   queue-default:
-    image: ghcr.io/mehariwamlake/frappe-learning:latest
+    image: ghcr.io/mehariwamlake/frappe-learning-backend:latest
     restart: always
     networks:
       - frappe_network
@@ -132,7 +132,7 @@ services:
       REDIS_QUEUE: ${REDIS_QUEUE}
 
   queue-long:
-    image: ghcr.io/mehariwamlake/frappe-learning:latest
+    image: ghcr.io/mehariwamlake/frappe-learning-backend:latest
     restart: always
     networks:
       - frappe_network
@@ -186,7 +186,7 @@ services:
       retries: 3
 
   scheduler:
-    image: ghcr.io/mehariwamlake/frappe-learning:latest
+    image: ghcr.io/mehariwamlake/frappe-learning-backend:latest
     restart: always
     networks:
       - frappe_network
@@ -196,7 +196,7 @@ services:
       - logs:/home/frappe/frappe-bench/logs
 
   websocket:
-    image: ghcr.io/mehariwamlake/frappe-learning:latest
+    image: ghcr.io/mehariwamlake/frappe-learning-websocket:latest
     restart: always
     networks:
       - frappe_network
