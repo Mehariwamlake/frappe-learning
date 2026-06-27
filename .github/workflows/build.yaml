@@ -50,9 +50,6 @@ permissions:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        target: [backend, frontend, websocket]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -104,18 +101,15 @@ jobs:
       - name: Normalize owner to lowercase
         run: echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
 
-      - name: Build & Push ${{ matrix.target }}
+      - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ${{ inputs.dockerfile || env.DOCKERFILE }}
           push: true
-
-          target: ${{ matrix.target }}
-
+          context: builds
+          file: builds/${{ inputs.dockerfile || env.DOCKERFILE }}
           tags: |
-            ghcr.io/${{ env.OWNER_LC }}/${{ github.event.repository.name }}-${{ matrix.target }}:${{ inputs.version || env.VERSION }}
-            ghcr.io/${{ env.OWNER_LC }}/${{ github.event.repository.name }}-${{ matrix.target }}:latest
+            ghcr.io/${{ env.OWNER_LC }}/${{ github.event.repository.name }}:${{ inputs.version || env.VERSION }}
+            ghcr.io/${{ env.OWNER_LC }}/${{ github.event.repository.name }}:latest
 
 
           build-args: |
