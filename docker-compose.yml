@@ -193,7 +193,6 @@ services:
       - frappe_network
     command:
       - >
-        curl -f http://${SITE_NAME}:${DB_PORT}/api/method/ping || echo "Site busy" && exit 0;
         bench --site all set-config -p maintenance_mode 1;
         bench --site all set-config -p pause_scheduler 1;
         bench --site all migrate;
