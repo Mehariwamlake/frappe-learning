@@ -188,7 +188,6 @@ services:
 
   migration:
     image: ghcr.io/mehariwamlake/frappe-learning:1.0.4
-    restart: always
     networks:
       - frappe_network
     command: >
