@@ -190,14 +190,14 @@ services:
     image: ghcr.io/mehariwamlake/frappe-learning:1.0.4
     networks:
       - frappe_network
-    command: >
-      bash -c "
-      bench --site all set-config -p maintenance_mode 1 &&
-      bench --site all set-config -p pause_scheduler 1 &&
-      bench --site all migrate &&
-      bench --site all set-config -p maintenance_mode 0 &&
-      bench --site all set-config -p pause_scheduler 0
-      "
+    command:
+      - >
+        curl -f http://${SITE_NAME}:${DB_PORT}/api/method/ping || echo "Site busy" && exit 0;
+        bench --site all set-config -p maintenance_mode 1;
+        bench --site all set-config -p pause_scheduler 1;
+        bench --site all migrate;
+        bench --site all set-config -p maintenance_mode 0;
+        bench --site all set-config -p pause_scheduler 0;
     volumes:
       - sites:/home/frappe/frappe-bench/sites
 
