@@ -196,6 +196,45 @@ services:
       - sites:/home/frappe/frappe-bench/sites
       - logs:/home/frappe/frappe-bench/logs
 
+  migration:
+    image: ghcr.io/mehariwamlake/frappe-learning:1.0.4
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis-cache:
+        condition: service_started
+      redis-queue:
+        condition: service_started
+    networks:
+      - frappe_network
+    entrypoint: ["bash", "-c"]
+    command: >
+      echo "Waiting for database...";
+      until mysqladmin ping -h "$$DB_HOST" -P "$$DB_PORT" -u root -p"$$MYSQL_ROOT_PASSWORD" --silent; do
+        sleep 3;
+      done;
+
+      echo "Enabling maintenance mode...";
+      bench --site all set-config -p maintenance_mode 1 || true;
+      bench --site all set-config -p pause_scheduler 1 || true;
+
+      echo "Running migrations...";
+      bench --site all migrate;
+
+      echo "Disabling maintenance mode...";
+      bench --site all set-config -p maintenance_mode 0 || true;
+      bench --site all set-config -p pause_scheduler 0 || true;
+
+      echo "Migration completed.";
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - logs:/home/frappe/frappe-bench/logs
+
   websocket:
     image: ghcr.io/mehariwamlake/frappe-learning:1.0.4
     restart: always
