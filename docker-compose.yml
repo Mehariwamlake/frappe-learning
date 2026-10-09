@@ -1,6 +1,7 @@
 services:
   backend:
     image: ghcr.io/mehariwamlake/frappe-learning:latest
+
     restart: always
     networks:
       - frappe_network
