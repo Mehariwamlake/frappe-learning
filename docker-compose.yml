@@ -267,11 +267,7 @@ services:
       retries: 30
     ports:
     - "9000:9000"
-  node-exporter:
-    image: prom/node-exporter:latest
-    restart: always
-    ports:
-      - "9100:9100"
+
 
 volumes:
   db-data:
